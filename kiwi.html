@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kiwi — Phones that feel like home</title>
+<style>
+  :root{
+    --bg-light:#FFFFFF;
+    --bg-dark:#000000;
+    --text-dark:#1D1D1F;
+    --text-muted:#6E6E73;
+    --text-light-muted:#F5F5F7;
+    --accent-blue:#0071E3;
+    --kiwi-green:#7EB338;
+    --kiwi-green-deep:#4C7A1F;
+    --radius-pill:999px;
+    --font-family:-apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:var(--font-family);
+    color:var(--text-dark);
+    background:var(--bg-light);
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
+
+  /* ---------- NAV ---------- */
+  .nav{
+    position:sticky; top:0; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 32px; height:52px;
+    background:rgba(255,255,255,0.8);
+    backdrop-filter:blur(20px); -webkit-backdrop-filter:blur(20px);
+    border-bottom:1px solid rgba(0,0,0,0.05);
+  }
+  .nav-left{display:flex; align-items:center; gap:36px;}
+  .logo{width:22px; height:22px; flex-shrink:0;}
+  .nav-links{display:flex; gap:28px; list-style:none;}
+  .nav-links a{font-size:12px; font-weight:500; color:var(--text-dark); opacity:0.85; transition:opacity .2s;}
+  .nav-links a:hover{opacity:1;}
+  .nav-right{display:flex; align-items:center; gap:20px;}
+  .icon-btn{width:16px; height:16px; cursor:pointer; opacity:0.85;}
+  .hamburger{display:none; width:22px; height:16px; flex-direction:column; justify-content:space-between; cursor:pointer;}
+  .hamburger span{display:block; height:2px; background:var(--text-dark); border-radius:2px;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    min-height:900px;
+    display:flex; flex-direction:column; align-items:center;
+    text-align:center; padding:88px 24px 40px;
+    position:relative; overflow:hidden;
+  }
+  .hero.light{background:var(--bg-light); color:var(--text-dark);}
+  .hero.dark{background:var(--bg-dark); color:var(--text-light-muted);}
+  .eyebrow{
+    font-size:13px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--kiwi-green-deep); margin-bottom:14px;
+  }
+  .hero.dark .eyebrow{color:var(--kiwi-green);}
+  .headline{
+    font-size:clamp(2.75rem, 6vw, 5.25rem);
+    font-weight:600; letter-spacing:-0.02em; line-height:1.02;
+    margin-bottom:16px;
+  }
+  .subhead{
+    font-size:clamp(1.4rem, 2.4vw, 1.85rem);
+    font-weight:400; color:var(--text-muted); margin-bottom:28px;
+    max-width:640px;
+  }
+  .hero.dark .subhead{color:var(--text-light-muted); opacity:0.75;}
+  .cta-row{display:flex; gap:14px; justify-content:center; margin-bottom:48px;}
+  .btn{
+    padding:12px 26px; border-radius:var(--radius-pill);
+    font-size:15px; font-weight:500; cursor:pointer; transition:all .2s ease;
+    border:1.5px solid var(--accent-blue);
+  }
+  .btn-fill{background:var(--accent-blue); color:#fff;}
+  .btn-fill:hover{background:#0060c4;}
+  .btn-outline{background:transparent; color:var(--accent-blue);}
+  .hero.dark .btn-outline{color:#7db8f0; border-color:#7db8f0;}
+  .btn-outline:hover{background:rgba(0,113,227,0.08);}
+
+  .hero-visual{
+    width:100%; max-width:1100px; flex:1;
+    display:flex; align-items:center; justify-content:center;
+    border-radius:24px; overflow:hidden;
+    position:relative;
+  }
+  .hero-visual img{width:100%; height:100%; object-fit:cover; border-radius:24px;}
+  .grad-mint{background:linear-gradient(160deg,#eaf6e3 0%, #d7ecd0 45%, #cfe8e0 100%);}
+  .grad-sky{background:linear-gradient(160deg,#eef4fb 0%, #dde9f7 45%, #e7eef5 100%);}
+
+  /* ---------- PROMO GRID ---------- */
+  .promo-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:0;
+  }
+  .promo-card{
+    position:relative; min-height:640px; padding:56px 44px;
+    display:flex; flex-direction:column; justify-content:flex-start; align-items:center;
+    text-align:center; overflow:hidden;
+  }
+  .promo-card.dark-card{background:#0a0a0a; color:var(--text-light-muted);}
+  .promo-card.photo-card{background:#111; color:#fff;}
+  .promo-card.photo-card img{
+    position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; opacity:0.9;
+  }
+  .promo-card.photo-card .overlay{
+    position:absolute; inset:0; background:linear-gradient(180deg, rgba(0,0,0,0.05) 0%, rgba(0,0,0,0.65) 78%);
+    z-index:1;
+  }
+  .promo-card .content{position:relative; z-index:2; display:flex; flex-direction:column; align-items:center;}
+  .promo-card .content img.product{position:relative; z-index:2; max-width:340px; margin-top:32px;}
+  .promo-title{font-size:2.2rem; font-weight:600; letter-spacing:-0.01em; margin-bottom:8px;}
+  .promo-desc{font-size:1.05rem; color:var(--text-light-muted); opacity:0.7; margin-bottom:20px;}
+  .promo-card.photo-card .promo-desc{margin-top:auto; opacity:0.85;}
+  .promo-card .cta-row{margin-bottom:0;}
+
+  /* ---------- CAROUSEL ---------- */
+  .carousel-section{background:#f5f5f7; padding:64px 0 56px;}
+  .carousel-heading{text-align:center; font-size:2.6rem; font-weight:600; letter-spacing:-0.01em; margin-bottom:36px;}
+  .carousel{
+    display:flex; gap:16px; overflow-x:auto; scroll-snap-type:x mandatory;
+    padding:0 24px 12px; scrollbar-width:none;
+  }
+  .carousel::-webkit-scrollbar{display:none;}
+  .slide{
+    scroll-snap-align:start; flex:0 0 auto;
+    width:min(78vw, 620px); height:400px;
+    border-radius:20px; position:relative; overflow:hidden;
+    display:flex; align-items:flex-end; padding:32px;
+    color:#fff;
+  }
+  .slide img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0;}
+  .slide .shade{position:absolute; inset:0; background:linear-gradient(0deg, rgba(0,0,0,0.75) 10%, rgba(0,0,0,0.05) 55%); z-index:1;}
+  .slide-content{position:relative; z-index:2; display:flex; align-items:center; justify-content:space-between; width:100%;}
+  .slide-text .tag{font-size:0.95rem; font-weight:600; opacity:0.85; margin-bottom:6px;}
+  .slide-text .tag .dot{color:var(--kiwi-green); margin:0 6px;}
+  .slide-text .headline-sm{font-size:1.5rem; font-weight:600; max-width:280px; line-height:1.2;}
+  .pill-small{
+    background:#fff; color:#000; border:none; padding:10px 20px; border-radius:var(--radius-pill);
+    font-size:14px; font-weight:600; white-space:nowrap; cursor:pointer;
+  }
+  .dots{display:flex; gap:8px; justify-content:center; align-items:center; margin-top:28px;}
+  .dots .dot-item{width:6px; height:6px; border-radius:50%; background:#c7c7cc; cursor:pointer; transition:all .2s;}
+  .dots .dot-item.active{background:var(--kiwi-green-deep); width:18px; border-radius:4px;}
+  .play-btn{
+    width:22px; height:22px; border-radius:50%; border:1px solid #86868b; display:flex; align-items:center; justify-content:center;
+    margin-left:10px; cursor:pointer; background:#fff;
+  }
+  .play-btn svg{width:8px; height:8px;}
+
+  /* ---------- FOOTER ---------- */
+  footer{background:#f5f5f7; padding:48px 24px 24px; font-size:12px; color:var(--text-muted);}
+  .footnote{max-width:1200px; margin:0 auto 24px; line-height:1.6;}
+  .footnote ol{padding-left:18px; margin-bottom:14px;}
+  .footnote p{margin-bottom:10px;}
+  .footnote a{color:var(--accent-blue);}
+  hr.footer-rule{border:none; border-top:1px solid #d2d2d7; max-width:1200px; margin:0 auto;}
+  .footer-grid{
+    max-width:1200px; margin:28px auto; display:grid; grid-template-columns:repeat(5,1fr); gap:24px;
+  }
+  .footer-col h4{font-size:12px; font-weight:600; color:var(--text-dark); margin-bottom:14px;}
+  .footer-col ul{list-style:none; display:flex; flex-direction:column; gap:10px;}
+  .footer-col a{color:var(--text-muted);}
+  .footer-col a:hover{color:var(--text-dark); text-decoration:underline;}
+  .footer-bottom{
+    max-width:1200px; margin:0 auto; padding-top:20px; display:flex; justify-content:space-between;
+    flex-wrap:wrap; gap:12px; border-top:1px solid #d2d2d7;
+  }
+  .footer-bottom .legal-links{display:flex; gap:16px; flex-wrap:wrap;}
+  .footer-bottom .legal-links a:hover{text-decoration:underline;}
+
+  /* ---------- RESPONSIVE ---------- */
+  @media (max-width:900px){
+    .nav-links{display:none;}
+    .hamburger{display:flex;}
+    .promo-grid{grid-template-columns:1fr;}
+    .footer-grid{grid-template-columns:repeat(2,1fr);}
+  }
+  @media (max-width:600px){
+    .hero{min-height:auto; padding:64px 20px 32px;}
+    .headline{font-size:clamp(2.2rem, 9vw, 3rem);}
+    .subhead{font-size:1.1rem;}
+    .footer-grid{grid-template-columns:1fr 1fr; gap:20px;}
+    .promo-card{min-height:520px; padding:40px 24px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-left">
+    <svg class="logo" viewBox="0 0 24 24" fill="none">
+      <ellipse cx="12" cy="13" rx="9" ry="9" fill="#7EB338"/>
+      <path d="M12 4c1.2 0 2 1.3 2 2.6 0 .5-.9.9-2 .9s-2-.4-2-.9C10 5.3 10.8 4 12 4Z" fill="#4C7A1F"/>
+      <circle cx="12" cy="13" r="5.2" fill="#F3EFD8"/>
+      <circle cx="12" cy="13" r="2.6" fill="#EDE7C2"/>
+      <circle cx="9" cy="11" r=".55" fill="#2b2b2b"/>
+      <circle cx="15" cy="11" r=".55" fill="#2b2b2b"/>
+      <circle cx="12" cy="14.5" r=".55" fill="#2b2b2b"/>
+      <circle cx="8.5" cy="15" r=".55" fill="#2b2b2b"/>
+      <circle cx="15.5" cy="15" r=".55" fill="#2b2b2b"/>
+      <circle cx="10" cy="17" r=".55" fill="#2b2b2b"/>
+      <circle cx="14" cy="17" r=".55" fill="#2b2b2b"/>
+    </svg>
+    <ul class="nav-links">
+      <li><a href="#phone">Kiwi Phone</a></li>
+      <li><a href="#air">Kiwi Air</a></li>
+      <li><a href="#watch">Kiwi Watch</a></li>
+      <li><a href="#buds">Kiwi Buds</a></li>
+      <li><a href="#cases">Cases</a></li>
+      <li><a href="#tradein">Trade‑In</a></li>
+      <li><a href="#care">Kiwi Care+</a></li>
+      <li><a href="#support">Support</a></li>
+    </ul>
+  </div>
+  <div class="nav-right">
+    <svg class="icon-btn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <svg class="icon-btn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+    <div class="hamburger"><span></span><span></span><span></span></div>
+  </div>
+</nav>
+
+<!-- HERO 1: Kiwi Phone -->
+<section class="hero light" id="phone">
+  <div class="eyebrow">Kiwi Phone 15</div>
+  <h1 class="headline">Ripe for anything.</h1>
+  <p class="subhead">Our fastest chip yet. A camera that sees in the dark. Skin so smooth you'll forget the case.</p>
+  <div class="cta-row">
+    <button class="btn btn-fill">Learn more</button>
+    <button class="btn btn-outline">Buy</button>
+  </div>
+  <div class="hero-visual grad-mint">
+    <img src="https://images.unsplash.com/photo-1592286927505-1def25115558?auto=format&fit=crop&w=1400&q=80" alt="Kiwi Phone 15 floating on a soft mint gradient">
+  </div>
+</section>
+
+<!-- HERO 2: Kiwi Air -->
+<section class="hero dark" id="air">
+  <div class="eyebrow">Kiwi Air</div>
+  <h1 class="headline">Impossibly thin.</h1>
+  <p class="subhead">3.2mm at its edge. All the power of Kiwi Phone, none of the weight.</p>
+  <div class="cta-row">
+    <button class="btn btn-fill">Learn more</button>
+    <button class="btn btn-outline">Buy</button>
+  </div>
+  <div class="hero-visual" style="background:linear-gradient(160deg,#1a1a1a,#000);">
+    <img src="https://images.unsplash.com/photo-1517430816045-df4b7de11d1d?auto=format&fit=crop&w=1400&q=80" alt="Kiwi Air smartphone on a dark studio backdrop">
+  </div>
+</section>
+
+<!-- PROMO GRID -->
+<div class="promo-grid">
+  <div class="promo-card dark-card" id="watch">
+    <div class="content">
+      <div class="promo-title">Kiwi Watch</div>
+      <div class="promo-desc">Your health, in the palm of your wrist.</div>
+      <div class="cta-row">
+        <button class="btn btn-fill">Learn more</button>
+        <button class="btn btn-outline" style="color:#7db8f0; border-color:#7db8f0;">Buy</button>
+      </div>
+      <img class="product" src="https://images.unsplash.com/photo-1579586337278-3befd40fd17a?auto=format&fit=crop&w=800&q=80" alt="Kiwi Watch on a wrist">
+    </div>
+  </div>
+  <div class="promo-card photo-card" id="buds">
+    <img src="https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=1000&q=80" alt="Person wearing Kiwi Buds outdoors">
+    <div class="overlay"></div>
+    <div class="content">
+      <div class="promo-title">Kiwi Buds</div>
+      <div class="promo-desc">Noise cancellation that gets out of your way — literally.</div>
+      <div class="cta-row">
+        <button class="btn btn-fill">Learn more</button>
+        <button class="btn btn-outline" style="color:#fff; border-color:#fff;">Buy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CAROUSEL -->
+<section class="carousel-section" id="care">
+  <h2 class="carousel-heading">More from the orchard.</h2>
+  <div class="carousel" id="carousel">
+    <div class="slide">
+      <img src="https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?auto=format&fit=crop&w=1000&q=80" alt="Kiwi Care plus device protection">
+      <div class="shade"></div>
+      <div class="slide-content">
+        <div class="slide-text">
+          <div class="tag">Kiwi Care<span class="dot">•</span>Protection, unbruised</div>
+          <div class="headline-sm">Drops happen. Coverage should too.</div>
+        </div>
+        <button class="pill-small">Get covered</button>
+      </div>
+    </div>
+    <div class="slide">
+      <img src="https://images.unsplash.com/photo-1556656793-08538906a9f8?auto=format&fit=crop&w=1000&q=80" alt="Kiwi Cloud storage on phone">
+      <div class="shade"></div>
+      <div class="slide-content">
+        <div class="slide-text">
+          <div class="tag">Kiwi Cloud<span class="dot">•</span>Never run out of space</div>
+          <div class="headline-sm">Every photo, backed up automatically.</div>
+        </div>
+        <button class="pill-small">Learn more</button>
+      </div>
+    </div>
+    <div class="slide">
+      <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=1000&q=80" alt="Kiwi Pay contactless payment">
+      <div class="shade"></div>
+      <div class="slide-content">
+        <div class="slide-text">
+          <div class="tag">Kiwi Pay<span class="dot">•</span>Tap, done</div>
+          <div class="headline-sm">The safest way to pay is already in your pocket.</div>
+        </div>
+        <button class="pill-small">Set up</button>
+      </div>
+    </div>
+    <div class="slide">
+      <img src="https://images.unsplash.com/photo-1580910051074-3eb694886505?auto=format&fit=crop&w=1000&q=80" alt="Kiwi cases and accessories lineup">
+      <div class="shade"></div>
+      <div class="slide-content">
+        <div class="slide-text">
+          <div class="tag">Cases<span class="dot">•</span>Fresh colors</div>
+          <div class="headline-sm">Dressed for every orchard.</div>
+        </div>
+        <button class="pill-small">Shop cases</button>
+      </div>
+    </div>
+  </div>
+  <div class="dots" id="dots">
+    <div class="dot-item active"></div>
+    <div class="dot-item"></div>
+    <div class="dot-item"></div>
+    <div class="dot-item"></div>
+    <div class="play-btn" id="playBtn">
+      <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="support">
+  <div class="footnote">
+    <ol>
+      <li>Trade‑in values vary by condition, model, and configuration. Not all devices are eligible for credit. Must be at least the age of majority to trade in for credit or for a Kiwi Gift Card. Actual value may be applied toward a qualifying purchase or added to a Kiwi Gift Card. Sales tax may apply.</li>
+    </ol>
+    <p>Kiwi Care+ plans require enrollment within 60 days of device purchase. Kiwi Cloud offers a free tier with paid tiers available for more storage.</p>
+    <p>A Kiwi ID is required to activate Kiwi Pay. Features are subject to change and may not be available in all regions or languages.</p>
+  </div>
+  <hr class="footer-rule">
+  <div class="footer-grid">
+    <div class="footer-col">
+      <h4>Shop and Learn</h4>
+      <ul>
+        <li><a href="#">Kiwi Phone</a></li>
+        <li><a href="#">Kiwi Air</a></li>
+        <li><a href="#">Kiwi Watch</a></li>
+        <li><a href="#">Kiwi Buds</a></li>
+        <li><a href="#">Cases</a></li>
+        <li><a href="#">Gift Cards</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Account</h4>
+      <ul>
+        <li><a href="#">Manage Your Kiwi ID</a></li>
+        <li><a href="#">Kiwi Account</a></li>
+        <li><a href="#">Kiwi Cloud</a></li>
+        <li><a href="#">Order Status</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Kiwi Store</h4>
+      <ul>
+        <li><a href="#">Find a Store</a></li>
+        <li><a href="#">Genius Bar</a></li>
+        <li><a href="#">Today at Kiwi</a></li>
+        <li><a href="#">Certified Refurbished</a></li>
+        <li><a href="#">Kiwi Trade In</a></li>
+        <li><a href="#">Financing</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>For Business</h4>
+      <ul>
+        <li><a href="#">Kiwi and Business</a></li>
+        <li><a href="#">Shop for Business</a></li>
+        <li><a href="#">Kiwi and Education</a></li>
+        <li><a href="#">Shop for K‑12</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Values</h4>
+      <ul>
+        <li><a href="#">Accessibility</a></li>
+        <li><a href="#">Environment</a></li>
+        <li><a href="#">Privacy</a></li>
+        <li><a href="#">Supply Chain</a></li>
+        <li><a href="#">Newsroom</a></li>
+        <li><a href="#">Careers</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div>Copyright © 2026 Kiwi Inc. All rights reserved.</div>
+    <div class="legal-links">
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Use</a>
+      <a href="#">Sales and Refunds</a>
+      <a href="#">Legal</a>
+      <a href="#">Site Map</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const carousel = document.getElementById('carousel');
+  const dots = document.querySelectorAll('.dot-item');
+  const playBtn = document.getElementById('playBtn');
+  const slides = document.querySelectorAll('.slide');
+  let autoplay = true;
+  let index = 0;
+
+  function goTo(i){
+    index = i;
+    slides[i].scrollIntoView({behavior:'smooth', inline:'start', block:'nearest'});
+    dots.forEach((d,di)=>d.classList.toggle('active', di===i));
+  }
+
+  dots.forEach((d,i)=>d.addEventListener('click', ()=>{ goTo(i); }));
+
+  carousel.addEventListener('scroll', ()=>{
+    const scrollLeft = carousel.scrollLeft;
+    let closest = 0, min = Infinity;
+    slides.forEach((s,i)=>{
+      const dist = Math.abs(s.offsetLeft - scrollLeft);
+      if(dist < min){ min = dist; closest = i; }
+    });
+    dots.forEach((d,di)=>d.classList.toggle('active', di===closest));
+    index = closest;
+  });
+
+  let timer = setInterval(()=>{
+    if(!autoplay) return;
+    index = (index + 1) % slides.length;
+    goTo(index);
+  }, 4000);
+
+  playBtn.addEventListener('click', ()=>{
+    autoplay = !autoplay;
+    playBtn.innerHTML = autoplay
+      ? '<svg viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 19,12 5,21"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="3" width="5" height="18"/><rect x="14" y="3" width="5" height="18"/></svg>';
+  });
+
+  document.querySelector('.hamburger').addEventListener('click', ()=>{
+    const links = document.querySelector('.nav-links');
+    const isOpen = links.style.display === 'flex';
+    links.style.display = isOpen ? 'none' : 'flex';
+    links.style.cssText += isOpen ? '' : 'position:absolute; top:52px; left:0; right:0; background:#fff; flex-direction:column; padding:16px 24px; gap:16px; box-shadow:0 4px 12px rgba(0,0,0,0.08);';
+  });
+</script>
+
+</body>
+</html>
