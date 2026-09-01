@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LUME</title>
+<style>
+  :root{
+    --text-primary:#1D1D1F;
+    --text-secondary:#6E6E73;
+    --link-blue:#0071E3;
+    --bg-light:#F5F5F7;
+    --divider:#D2D2D7;
+    --white:#FFFFFF;
+    --black:#000000;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:-apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Helvetica, Arial, sans-serif;
+    color:var(--text-primary);
+    background:var(--white);
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit; text-decoration:none;}
+  img,svg{display:block; max-width:100%;}
+
+  /* ---------- NAV ---------- */
+  .nav{
+    position:sticky; top:0; z-index:1000;
+    height:44px;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(255,255,255,0.8);
+    backdrop-filter:blur(20px) saturate(180%);
+    -webkit-backdrop-filter:blur(20px) saturate(180%);
+    border-bottom:1px solid rgba(0,0,0,0.05);
+    transition:background 0.3s ease;
+  }
+  .nav-inner{
+    width:100%; max-width:1024px;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:0 22px;
+  }
+  .nav-logo{
+    font-size:20px; line-height:1;
+  }
+  .nav-links{
+    display:flex; gap:26px; list-style:none;
+    font-size:12px; font-weight:500; color:var(--text-primary);
+  }
+  .nav-links li a{ opacity:0.9; transition:opacity 0.2s ease; }
+  .nav-links li a:hover{ opacity:1; border-bottom:1px solid var(--text-primary); }
+  .nav-icons{ display:flex; gap:18px; align-items:center; }
+  .nav-icons svg{ width:15px; height:15px; }
+  @media (max-width:734px){
+    .nav-links{ display:none; }
+  }
+
+  /* ---------- HERO BLOCK ---------- */
+  .block{
+    padding:96px 22px 72px;
+    text-align:center;
+    overflow:hidden;
+  }
+  .block.dark{ background:var(--black); color:var(--white); }
+  .block.light{ background:var(--white); color:var(--text-primary); }
+  .block.tinted{ background:var(--bg-light); color:var(--text-primary); }
+
+  .eyebrow{
+    font-size:14px; font-weight:600; color:var(--link-blue); margin-bottom:6px;
+    letter-spacing:0.2px;
+  }
+  .dark .eyebrow{ color:#2997FF; }
+
+  .headline{
+    font-size:56px; font-weight:600; letter-spacing:-0.015em; line-height:1.05;
+    margin-bottom:10px;
+  }
+  .subhead{
+    font-size:21px; font-weight:300; color:var(--text-secondary); line-height:1.4;
+    max-width:560px; margin:0 auto 20px;
+  }
+  .dark .subhead{ color:#A1A1A6; }
+
+  .cta-row{
+    display:flex; gap:24px; justify-content:center; align-items:center;
+    font-size:19px; margin-bottom:44px;
+  }
+  .cta-row a{ color:var(--link-blue); position:relative; }
+  .dark .cta-row a{ color:#2997FF; }
+  .cta-row a:hover{ text-decoration:underline; }
+  .cta-row .divider{ width:1px; height:16px; background:var(--divider); }
+  .dark .cta-row .divider{ background:#3A3A3C; }
+
+  .product-stage{
+    max-width:980px; margin:0 auto;
+    border-radius:24px;
+    display:flex; align-items:center; justify-content:center;
+    min-height:340px;
+  }
+
+  .render{ width:100%; max-width:640px; height:340px; position:relative; }
+  .render img{
+    width:100%; height:100%; object-fit:cover;
+    border-radius:20px;
+    box-shadow:0 30px 60px rgba(0,0,0,0.18);
+  }
+  .dark .render img{ box-shadow:0 30px 60px rgba(0,0,0,0.5); }
+
+  /* ---------- CAROUSEL ---------- */
+  .carousel-section{ background:var(--white); padding:64px 0 88px; }
+  .carousel-heading{ text-align:center; margin-bottom:32px; padding:0 22px; }
+  .carousel-heading h2{ font-size:32px; font-weight:600; letter-spacing:-0.01em; }
+  .carousel-heading p{ font-size:17px; color:var(--text-secondary); margin-top:6px; }
+
+  .carousel{
+    display:flex; gap:16px; overflow-x:auto;
+    scroll-snap-type:x mandatory;
+    padding:0 22px 20px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .carousel::-webkit-scrollbar{ height:0; }
+  .card{
+    scroll-snap-align:start;
+    flex:0 0 260px;
+    height:340px;
+    border-radius:18px;
+    position:relative;
+    overflow:hidden;
+    color:var(--white);
+    display:flex; flex-direction:column; justify-content:flex-end;
+    padding:20px;
+    background-size:cover;
+    background-position:center;
+  }
+  .card::before{
+    content:"";
+    position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(0,0,0,0.05) 40%, rgba(0,0,0,0.75) 100%);
+  }
+  .card .tag, .card h3, .card p{ position:relative; z-index:1; }
+  .card .tag{
+    align-self:flex-start;
+    font-size:11px; font-weight:600; padding:4px 10px;
+    background:rgba(255,255,255,0.18);
+    border:1px solid rgba(255,255,255,0.3);
+    border-radius:20px; margin-bottom:10px;
+    backdrop-filter:blur(6px);
+  }
+  .card h3{ font-size:20px; font-weight:700; line-height:1.2; }
+  .card p{ font-size:13px; font-weight:400; opacity:0.85; margin-top:4px; }
+
+  .dots{ display:flex; justify-content:center; gap:6px; margin-top:4px; }
+  .dots span{ width:6px; height:6px; border-radius:50%; background:var(--divider); }
+  .dots span.active{ background:var(--text-primary); }
+
+  /* ---------- FOOTER ---------- */
+  footer{ background:var(--bg-light); padding:32px 22px 20px; font-size:12px; color:var(--text-secondary); }
+  .footer-note{ max-width:1024px; margin:0 auto 18px; padding-bottom:18px; border-bottom:1px solid var(--divider); line-height:1.5; }
+  .footer-grid{
+    max-width:1024px; margin:0 auto;
+    display:grid; grid-template-columns:repeat(6,1fr); gap:24px;
+    padding-bottom:20px; border-bottom:1px solid var(--divider);
+  }
+  .footer-grid h4{ color:var(--text-primary); font-size:12px; font-weight:600; margin-bottom:12px; }
+  .footer-grid ul{ list-style:none; }
+  .footer-grid li{ margin-bottom:9px; }
+  .footer-grid a:hover{ text-decoration:underline; }
+  .footer-bottom{
+    max-width:1024px; margin:16px auto 0;
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px;
+  }
+  .footer-links{ display:flex; gap:14px; flex-wrap:wrap; }
+  .footer-links span{ color:var(--divider); }
+
+  @media (max-width:734px){
+    .headline{ font-size:36px; }
+    .subhead{ font-size:17px; }
+    .block{ padding:64px 20px 48px; }
+    .footer-grid{ grid-template-columns:1fr 1fr; }
+  }
+
+  /* focus visibility for accessibility */
+  a:focus-visible, button:focus-visible{ outline:2px solid var(--link-blue); outline-offset:2px; }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior:auto; }
+    *{ transition:none !important; animation:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav" id="mainNav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo" aria-label="LUME Home">◐</a>
+    <ul class="nav-links">
+      <li><a href="#store">Store</a></li>
+      <li><a href="#laptop">Arc</a></li>
+      <li><a href="#tablet">Slate</a></li>
+      <li><a href="#phone">Halo</a></li>
+      <li><a href="#watch">Pulse</a></li>
+      <li><a href="#vision">Field</a></li>
+      <li><a href="#buds">Bud</a></li>
+      <li><a href="#home">TV &amp; Home</a></li>
+      <li><a href="#entertainment">Entertainment</a></li>
+      <li><a href="#support">Support</a></li>
+    </ul>
+    <div class="nav-icons">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO 1: Phone -->
+<section class="block light" id="phone">
+  <div class="eyebrow">Halo</div>
+  <h1 class="headline">Halo 16</h1>
+  <p class="subhead">Impossibly bright. Ridiculously fast. Built for the way you actually use it.</p>
+  <div class="cta-row"><a href="#">Learn more</a><div class="divider"></div><a href="#">Buy</a></div>
+  <div class="product-stage">
+    <div class="render">
+      <img src="https://loremflickr.com/1200/800/smartphone,technology/all?lock=501" alt="Halo 16 smartphone">
+    </div>
+  </div>
+</section>
+
+<!-- HERO 2: Laptop (dark) -->
+<section class="block dark" id="laptop">
+  <div class="eyebrow">Arc</div>
+  <h1 class="headline">Arc Pro</h1>
+  <p class="subhead">More power than you'll ever need. Until you do.</p>
+  <div class="cta-row"><a href="#">Learn more</a><div class="divider"></div><a href="#">Buy</a></div>
+  <div class="product-stage">
+    <div class="render">
+      <img src="https://loremflickr.com/1200/800/laptop,keyboard/all?lock=502" alt="Arc Pro laptop">
+    </div>
+  </div>
+</section>
+
+<!-- HERO 3: Tablet -->
+<section class="block light" id="tablet">
+  <div class="eyebrow">Slate</div>
+  <h1 class="headline">Slate Air</h1>
+  <p class="subhead">Thin as an idea. Sturdy as a habit.</p>
+  <div class="cta-row"><a href="#">Learn more</a><div class="divider"></div><a href="#">Buy</a></div>
+  <div class="product-stage">
+    <div class="render">
+      <img src="https://loremflickr.com/1200/800/tablet,touchscreen/all?lock=503" alt="Slate Air tablet">
+    </div>
+  </div>
+</section>
+
+<!-- HERO 4: Watch (dark) -->
+<section class="block dark" id="watch">
+  <div class="eyebrow">Pulse</div>
+  <h1 class="headline">Pulse Series 9</h1>
+  <p class="subhead">Every heartbeat, considered.</p>
+  <div class="cta-row"><a href="#">Learn more</a><div class="divider"></div><a href="#">Buy</a></div>
+  <div class="product-stage">
+    <div class="render">
+      <img src="https://loremflickr.com/1200/800/smartwatch,wrist/all?lock=504" alt="Pulse Series 9 smartwatch">
+    </div>
+  </div>
+</section>
+
+<!-- HERO 5: Buds -->
+<section class="block light" id="buds">
+  <div class="eyebrow">Bud</div>
+  <h1 class="headline">Bud Max</h1>
+  <p class="subhead">Silence, on demand. Sound, exactly as intended.</p>
+  <div class="cta-row"><a href="#">Learn more</a><div class="divider"></div><a href="#">Buy</a></div>
+  <div class="product-stage">
+    <div class="render">
+      <img src="https://loremflickr.com/1200/800/earbuds,wireless/all?lock=505" alt="Bud Max wireless earbuds">
+    </div>
+  </div>
+</section>
+
+<!-- Hero 6: Field (Vision, dark) -->
+<section class="block dark" id="vision">
+  <div class="eyebrow">Field</div>
+  <h1 class="headline">Field One</h1>
+  <p class="subhead">A window that happens to be a computer.</p>
+  <div class="cta-row"><a href="#">Learn more</a><div class="divider"></div><a href="#">Buy</a></div>
+  <div class="product-stage">
+    <div class="render">
+      <img src="https://loremflickr.com/1200/800/vrheadset,virtualreality/all?lock=506" alt="Field One mixed reality headset">
+    </div>
+  </div>
+</section>
+
+<!-- CAROUSEL -->
+<section class="carousel-section" id="entertainment">
+  <div class="carousel-heading">
+    <h2>Endless entertainment.</h2>
+    <p>Stories worth staying up for.</p>
+  </div>
+  <div class="carousel" id="carousel">
+    <div class="card" style="background-image:url('https://loremflickr.com/500/700/galaxy,stars/all?lock=601');">
+      <span class="tag">Sci-Fi</span>
+      <h3>Horizon Line</h3>
+      <p>Season 3 now streaming</p>
+    </div>
+    <div class="card" style="background-image:url('https://loremflickr.com/500/700/cityscape,night/all?lock=602');">
+      <span class="tag">Thriller</span>
+      <h3>Quiet Static</h3>
+      <p>New episode weekly</p>
+    </div>
+    <div class="card" style="background-image:url('https://loremflickr.com/500/700/ocean,waves/all?lock=603');">
+      <span class="tag">Drama</span>
+      <h3>Low Tide</h3>
+      <p>Limited series</p>
+    </div>
+    <div class="card" style="background-image:url('https://loremflickr.com/500/700/mountains,nature/all?lock=604');">
+      <span class="tag">Documentary</span>
+      <h3>The Long Field</h3>
+      <p>Now streaming</p>
+    </div>
+    <div class="card" style="background-image:url('https://loremflickr.com/500/700/microphone,stage/all?lock=605');">
+      <span class="tag">Comedy</span>
+      <h3>Second Draft</h3>
+      <p>Season 1 now streaming</p>
+    </div>
+  </div>
+  <div class="dots">
+    <span class="active"></span><span></span><span></span><span></span><span></span>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="support">
+  <div class="footer-note">
+    Prices, availability, and specifications shown are illustrative and subject to change.
+    LUME and product names shown are fictional and used for demonstration purposes only.
+    A footnote index (1–6) would appear here referencing carrier terms, trade-in eligibility,
+    battery testing methodology, and financing disclosures.
+  </div>
+  <div class="footer-grid">
+    <div>
+      <h4>Shop and Learn</h4>
+      <ul>
+        <li><a href="#">Store</a></li>
+        <li><a href="#">Halo</a></li>
+        <li><a href="#">Arc</a></li>
+        <li><a href="#">Slate</a></li>
+        <li><a href="#">Pulse</a></li>
+        <li><a href="#">Accessories</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Account</h4>
+      <ul>
+        <li><a href="#">Manage your ID</a></li>
+        <li><a href="#">Order status</a></li>
+        <li><a href="#">Wallet</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>Entertainment</h4>
+      <ul>
+        <li><a href="#">Streaming</a></li>
+        <li><a href="#">Music</a></li>
+        <li><a href="#">Arcade</a></li>
+        <li><a href="#">News</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>LUME Store</h4>
+      <ul>
+        <li><a href="#">Find a store</a></li>
+        <li><a href="#">Genius bar</a></li>
+        <li><a href="#">Trade in</a></li>
+        <li><a href="#">Financing</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>For Business</h4>
+      <ul>
+        <li><a href="#">LUME and business</a></li>
+        <li><a href="#">Shop for business</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>About LUME</h4>
+      <ul>
+        <li><a href="#">Newsroom</a></li>
+        <li><a href="#">Careers</a></li>
+        <li><a href="#">Investors</a></li>
+        <li><a href="#">Values</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>Copyright © 2026 LUME Inc. All rights reserved.</span>
+    <div class="footer-links">
+      <a href="#">Privacy Policy</a><span>|</span>
+      <a href="#">Terms of Use</a><span>|</span>
+      <a href="#">Sales and Refunds</a><span>|</span>
+      <a href="#">Legal</a><span>|</span>
+      <a href="#">Site Map</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // nav background intensifies slightly on scroll
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => {
+    nav.style.background = window.scrollY > 10
+      ? 'rgba(255,255,255,0.92)'
+      : 'rgba(255,255,255,0.8)';
+  });
+
+  // graceful fallback if a strict-matched niche photo fails to load
+  document.querySelectorAll('img[src*="loremflickr"]').forEach(img => {
+    img.addEventListener('error', function handler(){
+      img.removeEventListener('error', handler);
+      img.src = img.src.replace('/all?lock', '?lock').split(',')[0] + '?lock=' + Math.floor(Math.random()*900+100);
+    }, { once:true });
+  });
+
+  const carousel = document.getElementById('carousel');
+  const dots = document.querySelectorAll('.dots span');
+  carousel.addEventListener('scroll', () => {
+    const cardWidth = carousel.children[0].offsetWidth + 16;
+    const index = Math.round(carousel.scrollLeft / cardWidth);
+    dots.forEach((d,i) => d.classList.toggle('active', i === index));
+  });
+</script>
+
+</body>
+</html>
